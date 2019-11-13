@@ -10,20 +10,45 @@ var app = express();
 const {
     PORT = 4000, 
     HOST = 'localhost',
-    USER = '',
-    PASSWORD = '', 
-    DATABASE = '' 
+    UNAME = 'user',
+    PASSWORD = 'pass', 
+    DATABASE = 'db' 
  } = process.env ;
 
+// var schema = buildSchema(`
+//   type Query {
+//     hello: String
+//   }
+// `);
 var schema = buildSchema(`
+  type User {
+    id: String
+    name: String
+    job_title: String
+    email: String
+  }
   type Query {
-    hello: String
+    getUsers: [User],
+    getUserInfo(id: Int) : User
   }
 `);
 
+const queryDB = (req, sql, args) => new Promise((resolve, reject) => {
+    req.mysqlDb.query(sql, args, (err, rows) => {
+        if (err)
+            return reject(err);
+        rows.changedRows || rows.affectedRows || rows.insertId ? resolve(true) : resolve(rows);
+    });
+});
+
 var root = {
-  hello: () => "World"
+  getUsers: (args, req) => queryDB(req, "select * from users").then(data => data),
+  getUserInfo: (args, req) => queryDB(req, "select * from users where id = ?", [args.id]).then(data => data[0])
 };
+
+// var root = {
+//   hello: () => "World"
+// };
 
 app.use('/graphql', graphqlHTTP({
   schema: schema,
@@ -35,7 +60,7 @@ app.use((req, res, next) => {
     
   req.mysqlDb = mysql.createConnection({
     host     : HOST  ,
-    user     : USER,
+    user     : UNAME,
     password : PASSWORD,
     database : DATABASE
   });
