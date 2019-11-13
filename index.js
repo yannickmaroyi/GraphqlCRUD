@@ -1,6 +1,7 @@
 var express = require('express');
 var graphqlHTTP = require('express-graphql');
 var { buildSchema } = require('graphql');
+var mysql = require('mysql');
 
 var schema = buildSchema(`
   type Query {
@@ -19,6 +20,17 @@ app.use('/graphql', graphqlHTTP({
   rootValue: root,
   graphiql: true,
 }));
+
+app.use((req, res, next) => {
+  req.mysqlDb = mysql.createConnection({
+    host     : 'localhost',
+    user     : 'root',
+    password : '',
+    database : 'userapp'
+  });
+  req.mysqlDb.connect();
+  next();
+}); 
 
 app.listen(4000);
 
