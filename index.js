@@ -3,9 +3,20 @@ var graphqlHTTP = require('express-graphql');
 var { buildSchema } = require('graphql');
 var mysql = require('mysql');
 var dotenv = require('dotenv');
+var cors = require('cors');
+var bodyParser = require('body-parser');
 dotenv.config();
 
 var app = express();
+
+// using cors middleware
+app.use(cors());
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
 
 const {
     PORT = 4000, 
