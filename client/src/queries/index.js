@@ -38,4 +38,4 @@ export const DELETE_USER = gql`
   mutation($id: Int) {
     deleteUser(id: $id)
   }
-`
+`;

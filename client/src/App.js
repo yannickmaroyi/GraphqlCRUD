@@ -1,24 +1,27 @@
 import React from 'react';
-import logo from './logo.svg';
+import { GET_USERS, VIEW_USERS} from './queries';
+import { useQuery} from '@apollo/react-hooks';
+import { Card,CardBody, CardSubtitle, CardHeader } from 'reactstrap';
 import './App.css';
 
 function App() {
+
+  const getAllUsers = useQuery(GET_USERS);
+  const userInfo = useQuery(VIEW_USERS, { variables: { id: 3 }})
+  console.log(getAllUsers);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-        dont type such things
-        </a>
-      </header>
+       <Card>
+         <CardHeader>
+           displaying all data
+         </CardHeader>
+         <CardBody>
+           <CardSubtitle> nice</CardSubtitle>
+           <pre>
+             { JSON.stringify(getAllUsers.data, null, 2)}
+           </pre>
+         </CardBody>
+       </Card>
     </div>
   );
 }
